@@ -1,0 +1,113 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 13-sept.-2016, 22:40:46
+    Author     : tim
+*/
+
+.avatar {
+    height:75px;
+    width: 75px;
+}
+
+.error {
+    display:none;
+
+}
+@font-face {
+    font-family: aaaiight;
+    src: url('../fonts/aaaiight.ttf');
+
+}
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: 
+            local('Roboto'), 
+            local('Roboto-regular'), 
+            url('../fonts/Roboto-Medium.ttf') format('ttf');
+}
+a.navbar-brand, #logoFooter {
+    font-family: aaaiight;
+    font-size:50px;
+}
+
+.h4Film {
+    height: 70px;    
+}
+.thumbFilm {
+    background-color: #bbbbbb;
+    padding : 5px;
+    margin : 5px;
+    height: 150px;
+}
+.jaune {
+    color: yellow;
+}
+.thumbFilmo {
+    width:64px;
+}
+
+.fb-profile img.fb-image-lg{
+    z-index: 0;
+    width: 100%;  
+    margin-bottom: 10px;
+}
+
+.fb-image-profile
+{
+    margin: -90px 10px 0px 50px;
+    z-index: 9;
+    width: 15%; 
+}
+
+@media (max-width:768px)
+{
+
+    .fb-profile-text>h1{
+        font-weight: 700;
+        font-size:16px;
+    }
+
+    .fb-image-profile
+    {
+        margin: -45px 10px 0px 25px;
+        z-index: 9;
+        width: 15%; 
+    }
+}
+.choixmois ul li{
+    list-style: none;
+    display: inline-block;
+    font-size:20px;
+    width: 50px;
+}
+
+.mois td {
+    height:75px;
+    width: 50px;
+}
+
+.choixmois .active {
+    color: red;
+}
+li.events {
+    width: 50px;
+}
+.jour {
+    border: 1px solid lightgray
+}
+.weekend {
+    background-color: rgba(193, 66, 66, 0.05)
+}
+.aujourdhui {
+    border: 1px solid lightgray;
+    background-color: rgba(265,42,33,0.5);
+}
+li.events {
+    list-style: none;
+}
