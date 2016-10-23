@@ -11,6 +11,23 @@ use Core\Tables\Table;
  */
 class CalendrierTable extends Table {
     
+    public function all($id) {
+        return $this->requete("
+                SELECT calendriers.id, calendriers.title as titre, calendriers.created_at, calendriers.updated_at FROM calendriers 
+            
+            WHERE calendriers.user_id = ? 
+            ", [$_SESSION["auth"]]);
+            
+    }
+    public function liste($cle, $valeur, $id) {
+        $enregistrements = $this->all($id);
+        $return = [];
+        foreach ($enregistrements as $val) {
+            $return[$val->$cle] = $val->$valeur;
+        }
+        return $return;
+    }
+    
     public function find($userId, $id) {
         return $this->requete("
             SELECT calendriers.id, calendriers.title as titre, calendriers.created_at, calendriers.updated_at FROM calendriers 

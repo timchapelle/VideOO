@@ -27,12 +27,14 @@ class EvenementsController extends AppController {
         }
         $id = $cal;
         $calendrier = $this->Calendrier->find($_SESSION["auth"], $cal);
+        $calendriers = $this->Calendrier->liste('id','titre',$_SESSION["auth"]);
         $evenements = $this->Evenement->all($cal);
         $form = new BootstrapForm($_POST);
+        $formCal = new BootstrapForm($calendriers);
         $date = new Date();
         $year = date('Y');
         $dates = $date->all($year);
-        return $this->afficher('calendrier.index', compact('calendrier', 'evenements', 'date', 'dates', 'year', 'form', 'id'));
+        return $this->afficher('calendrier.index', compact('calendrier','calendriers', 'formCal', 'evenements', 'date', 'dates', 'year', 'form', 'id'));
     }
 
     /**
@@ -189,10 +191,21 @@ class EvenementsController extends AppController {
      */
     public function delete() {
         if (!empty($_POST)) {
-            $resultat = $this->Evenement->delete($_POST["id"]);
-            if ($resultat) {
-                return $this->index();
+            if (isset($_POST["only1"])) {
+                $this->Evenement->delete($_POST["id"]);
             }
+            if (isset($_POST["all"])) {
+                $this->Evenement->delete($_POST["parent_id"]);
+                $this->Evenement->deleteAllChildren($_POST["parent_id"]);
+            }
+            if (isset($_POST["next"])) {
+               $this->Evenement->deleteNextChildren($_POST["parent_id"], $_POST["date_debut"]);
+            }
+            if (isset($_POST["previous"])) {
+               $this->Evenement->deletePreviousChildren($_POST["parent_id"], $_POST["date_debut"]);
+            }
+            
+            return $this->index();
         }
     }
 

@@ -79,9 +79,9 @@ $(function () {
             $("#quoti").val("1");
         }
 
-
         return valide;
     });
+    
 
     /**
      * Affichage des choix de récurrence
@@ -101,8 +101,7 @@ $(function () {
             $("#mensu").prop('checked', false);
         } else if ($("#quoti").prop('checked')) {
             $("#quoti").prop('checked', false);
-        }        
-        else if (!($("#xfois").prop('checked'))) {
+        } else if (!($("#xfois").prop('checked'))) {
             $("#choixRecur_fin").toggleClass("hide");
         }
     });
@@ -133,45 +132,49 @@ $(function () {
         }
     });
 
-
 });
-
 /**
-     * Initialiser les popover
-     * @param {type} id id du popover à ouvrir
-     * @returns {void}
-     */
-    function showPopover(id) {
-        $("#pop" + id).popover('toggle');
-    }
-    /**
-     * 
-     * @param {int} h_actu Heure actuelle
-     * @param {timestamp} d_actu Date actuelle 
-     * @param {timestamp} dateAjout Date de l'ajout
-     * @returns {undefined}
-     */
-    function ajout(h_actu, d_actu, dateAjout) {
-        // Affichage du modal d'ajout
-        $("#ajoutEvent").modal('show');
-        // Création de deux dates, pour stocer d_actu et date_Ajout
-        var date = new Date(dateAjout * 1000);
-        var date2 = new Date(d_actu * 1000);
-        dateAjout = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
-        d_actu = date2.getFullYear() + '-' + ('0' + (date2.getMonth() + 1)).slice(-2) + '-' + ('0' + date2.getDate()).slice(-2);
+ * Afficher les choix de suppression
+ */
+function toggleChoixDelete(id) {
+    $("#choixDelete" + id).toggleClass("hide");
+}
+/**
+ * Initialiser les popover
+ * @param {type} id id du popover à ouvrir
+ * @returns {void}
+ */
+function showPopover(id) {
+    $("#pop" + id).popover('toggle');
+}
+/**
+ * 
+ * @param {int} h_actu Heure actuelle
+ * @param {timestamp} d_actu Date actuelle 
+ * @param {timestamp} dateAjout Date de l'ajout
+ * @returns {undefined}
+ */
+function ajout(h_actu, d_actu, dateAjout) {
+    // Affichage du modal d'ajout
+    $("#ajoutEvent").modal('show');
+    // Création de deux dates, pour stocer d_actu et date_Ajout
+    var date = new Date(dateAjout * 1000);
+    var date2 = new Date(d_actu * 1000);
+    dateAjout = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+    d_actu = date2.getFullYear() + '-' + ('0' + (date2.getMonth() + 1)).slice(-2) + '-' + ('0' + date2.getDate()).slice(-2);
 
-        $("#date_debut").attr('value', dateAjout);
+    $("#date_debut").attr('value', dateAjout);
 
-        // Si c'est le jour-même, il faut désactiver les heures < heure actuelle
-        if (d_actu === dateAjout) {
+    // Si c'est le jour-même, il faut désactiver les heures < heure actuelle
+    if (d_actu === dateAjout) {
 
-            for (var k = 0; k < h_actu; k++) {
-                $("#hfin" + ('0' + k).slice(-2)).hide();
-                $("#hdebut" + ('0' + k).slice(-2)).hide();
-            }
-
+        for (var k = 0; k < h_actu; k++) {
+            $("#hfin" + ('0' + k).slice(-2)).hide();
+            $("#hdebut" + ('0' + k).slice(-2)).hide();
         }
+
     }
+}
 
 
 

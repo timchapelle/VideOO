@@ -3,11 +3,16 @@
  * Page d'accueil du calendrier
  */
 ?>
-
+<div class="input-group">
+<form action="index.php?p=calendriers.index" method="POST">
+    <?= $formCal->select('choixCal', 'Vos calendriers', $calendriers)?>
+    <button class="btn btn-primary-outline" type="submit" name="confirmer" value="donfirmer">Confirmer</button>
+</form>
+</div>
 <h1><?= $calendrier->titre ?></h1>
 <div class="periodes">
     <div class="annee">
-        <h1>
+        <h3>
             <a href="index.php?p=calendriers.index&id=<?= $_SESSION['auth'] ?>&year=<?= $year - 1 ?>">
                 <span class="badge"><i class="fa fa-chevron-left"></i>
                 </span>
@@ -20,7 +25,7 @@
                     <i class="fa fa-chevron-right"></i>
                 </span>
             </a>
-        </h1>
+        </h3>
     </div>
     <div class="choixmois">
         <ul>
@@ -73,6 +78,7 @@
                                         ?>
                                         <!-- Evenements -->
                             <li class="events" >
+
                                 <!-- Popover -->
                                 <div id="pop<?= $id ?>"         
                                      data-toggle="popover" 
@@ -104,28 +110,69 @@
                                                     <?= $j . '/' . $mois ?>
 
                                                 </span>
+                                                &nbsp;
                                                 <span class="label label-warning">
                                                     <i class="fa fa-clock-o"></i>
                                                     <?= ((isset($evenement->heure_debut)) ? substr('0' . $evenement->heure_debut, -2) . 'h' . substr('0' . $evenement->min_debut, -2) : 'Toute la journée') ?>
                                                     <?= ((isset($evenement->heure_fin)) ? ' - ' . substr('0' . $evenement->heure_fin, -2) . 'h' . substr('0' . $evenement->min_fin, -2) : '') ?>
                                                 </span>
                                                 &nbsp;
+                                                <?php
+                                                $parent = $evenement->isParent();
+                                                if ($parent) :
+                                                    $enfants = $evenement->enfants;
+                                                    ?>
+                                                    <span class="label label-default">Parent : <?= $enfants->nb ?> enfants
+
+                                                    </span>
+                                                    <?php
+                                                endif;
+                                                $enfant = $evenement->isEnfant();
+                                                if ($enfant) :
+                                                    ?>
+                                                    <span class="label label-default">Enfant
+
+                                                    </span>
+
+                                                <?php endif; ?>
 
                                             </h4>
+
                                             <?php if ($_SESSION["auth"] == $evenement->user_id): ?>
-                                                <div class="button-group">
-                                                    <form action="index.php?p=evenements.delete" method="POST">
-                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
-                                                        <input type="hidden" name="id" value="<?= $evenement->id ?>">
-                                                        <input type="hidden" name="calendrier_id" value="<?= $evenement->calendrier_id ?>">
-                                                    </form>
-                                                    <form action="index.php?p=evenements.edit" method="POST">
-                                                        <button type="submit" class="btn btn-primary"><i class="fa fa-edit"></i></button>
+
+                                                <div class="btn-group" role="group" aria-label="...">
+
+                                                    <form action="index.php?p=evenements.edit" method="POST" style="display:inline-block">
                                                         <input type="hidden" name="id" value="<?= $evenement->id ?>">
                                                         <input type="hidden" name="calendrier_id" value="<?= $evenement->calendrier_id ?>">
                                                         <input type="hidden" name="time" value="<?= strtotime($evenement->date_debut) ?>">
+
+                                                        <button type="button" class="btn btn-primary-outline"><i class="fa fa-edit"></i></button>
                                                     </form>
+                                                    <button type="button" class="btn btn-danger-outline" id="btnDelete" onclick="toggleChoixDelete(<?= $evenement->id ?>)"><i class="fa fa-trash-o"></i></button>
                                                 </div>
+                                                <form action="index.php?p=evenements.delete" method="POST">
+                                                    <input type="hidden" name="id" value="<?= $evenement->id ?>">
+                                                    <input type="hidden" name="calendrier_id" value="<?= $evenement->calendrier_id ?>">
+                                                    <input type="hidden" name="date_debut" value="<?=$evenement->date_debut ?>">
+                                                    <input type="hidden" name="parent_id" value="<?=(is_null($evenement->parent_id)) ? $evenement->id :$evenement->parent_id?>">
+                                                    <div class="hide" id="choixDelete<?= $evenement->id ?>">
+                                                        <div class="checkbox">
+                                                            <label><input name="only1" id="only1" type="checkbox">Seulement celui-ci</label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label><input name="all" id="all" type="checkbox">Tous</label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label><input name="previous" id="previous" type="checkbox">Les précédents</label>
+                                                        </div>
+                                                        <div class="checkbox">
+                                                            <label><input name="next" id="next" type="checkbox">Les suivants</label>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-danger" id="confirmDelete"><i class="fa fa-trash-o"></i></button>
+                                                    </div>
+                                                </form>
+
 
                                             <?php endif; ?>
 
@@ -216,6 +263,7 @@
 
     </div>
 </div>
+<!-- Fin model ajout article -->
 <div id="show"></div>
 <script>
     /**

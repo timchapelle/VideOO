@@ -28,12 +28,14 @@ class CalendriersController extends AppController {
      */
     public function index() {
         $calendrier = $this->Calendrier->find($_SESSION["auth"], $_GET["id"]);
+        $calendriers = $this->Calendrier->liste('id','titre',$_SESSION["auth"]);
         $evenements = $this->Evenement->all($calendrier->id);
         $form = new BootstrapForm($_POST);
+        $formCal= new BootstrapForm($calendriers);
         $date = new Date();
         $year = $_GET["year"];
         $dates = $date->all($year);
-        return $this->afficher('calendrier.index', compact('calendrier', 'evenements', 'form', 'dates', 'year', 'date'));
+        return $this->afficher('calendrier.index', compact('calendrier','calendriers', 'formCal', 'evenements', 'form', 'dates', 'year', 'date'));
     }
 
 }
