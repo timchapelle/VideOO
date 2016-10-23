@@ -17,7 +17,6 @@ class UtilisateursController extends AppController {
         $errors = false;
         if (!empty($_POST)) {
             $auth = new DbAuth(App::getInstance()->getDb());
-
             if ($auth->login($_POST["login"], $_POST["password"])) {
                 header('Location:index.php?p=articles.index');
             } else {

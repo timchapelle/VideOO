@@ -52,6 +52,12 @@ $nbMessages = count($messages);
                     <li>
                         <a href="index.php?p=articles.index"><i class="fa fa-newspaper-o"></i>&nbsp; Articles</a>
                     </li>
+                    <li>
+                        <a href="index.php?p=calendriers.index"><i class="fa fa-calendar"></i>&nbsp; Calendrier</a>
+                    </li>
+                    <li>
+                        <a href="index.php?p=editeurs.index"><i class="fa fa-code"></i>&nbsp; Editeur</a>
+                    </li>
                     
                 </ul>
             </li>

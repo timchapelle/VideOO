@@ -32,7 +32,6 @@ class DbAuth {
         if ($user) {
             if ($user->password === md5($pass)) {
                 $_SESSION["auth"] = $user->id;
-                $_SERVER["connectedUsers"][] = $user->id;
                 return true;
             }
         }

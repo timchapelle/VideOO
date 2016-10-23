@@ -80,6 +80,8 @@ a.navbar-brand, #logoFooter {
         width: 15%; 
     }
 }
+
+/* Calendrier */
 .choixmois ul li{
     list-style: none;
     display: inline-block;

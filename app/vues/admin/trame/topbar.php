@@ -56,13 +56,19 @@ $nbMessages = count($messages);
                     <li>
                         <a href="index.php?p=calendriers.index&id=<?=$currentUser->id?>&year=<?=date('Y')?>"><i class="fa fa-calendar fa-fw"></i> Calendrier</a>
                     </li>
+                    <li>
+                        <a href="index.php?p=editeurs.index"><i class="fa fa-code fa-fw"></i>Editeur</a>
+                    </li>
+                    <li>
+                        <a href="index.php?p=editeurs.live"><i class="fa fa-code fa-fw"></i>Editeur live</a>
+                    </li>
                 </ul>
             </li>
             <li><a href="index.php?p=allocine.recherche.globale">
                     <i class="fa fa-search"></i>&nbsp;Allocine</a></li>
             <li><a href="index.php?p=admin.utilisateurs.index"><i class="fa fa-users"></i>&nbsp;Membres</a></li>
             <li><a href="index.php?p=utilisateurs.logout"><i class="fa fa-external-link-square"></i>&nbsp;Déconnexion</a></li>
-
+            
         </ul>
 
     </div>

@@ -13,7 +13,7 @@ class CalendrierTable extends Table {
     
     public function all($id) {
         return $this->requete("
-                SELECT calendriers.id, calendriers.title as titre, calendriers.created_at, calendriers.updated_at FROM calendriers 
+                SELECT calendriers.id, calendriers.titre, calendriers.created_at, calendriers.updated_at FROM calendriers 
             
             WHERE calendriers.user_id = ? 
             ", [$_SESSION["auth"]]);
@@ -28,12 +28,21 @@ class CalendrierTable extends Table {
         return $return;
     }
     
-    public function find($userId, $id) {
-        return $this->requete("
-            SELECT calendriers.id, calendriers.title as titre, calendriers.created_at, calendriers.updated_at FROM calendriers 
+    public function find($userId, $id = null) {
+        if ($id) {
+            return $this->requete("
+            SELECT calendriers.id, calendriers.titre, calendriers.created_at, calendriers.updated_at FROM calendriers 
             
-            WHERE calendriers.user_id = ? AND calendriers.id = ?
+            WHERE calendriers.user_id = ? AND calendriers.id = ? 
             ", [$_SESSION["auth"], $id], true);
+        } else {
+            return $this->requete("
+            SELECT calendriers.id, calendriers.titre, calendriers.created_at, calendriers.updated_at FROM calendriers 
+            
+            WHERE calendriers.user_id = ? LIMIT 1
+            ", [$_SESSION["auth"]], true);
+        }
+        
     }
     
     public function getEvents($id) {

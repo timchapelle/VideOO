@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+
 use App;
 use Core\Date\Date;
 use Core\HTML\BootstrapForm;
@@ -14,6 +15,9 @@ class EvenementsController extends AppController {
 
     public function __construct() {
         parent::__construct();
+        if (!isset($_SESSION["auth"])) {
+            $this->forbidden();
+        }
         $this->loadModele('Evenement');
         $this->loadModele('Calendrier');
     }
@@ -27,14 +31,14 @@ class EvenementsController extends AppController {
         }
         $id = $cal;
         $calendrier = $this->Calendrier->find($_SESSION["auth"], $cal);
-        $calendriers = $this->Calendrier->liste('id','titre',$_SESSION["auth"]);
+        $calendriers = $this->Calendrier->liste('id', 'titre', $_SESSION["auth"]);
         $evenements = $this->Evenement->all($cal);
         $form = new BootstrapForm($_POST);
-        $formCal = new BootstrapForm($calendriers);
+        $formCal = new BootstrapForm();
         $date = new Date();
         $year = date('Y');
         $dates = $date->all($year);
-        return $this->afficher('calendrier.index', compact('calendrier','calendriers', 'formCal', 'evenements', 'date', 'dates', 'year', 'form', 'id'));
+        return $this->afficher('calendrier.index', compact('calendrier', 'calendriers', 'formCal', 'evenements', 'date', 'dates', 'year', 'form', 'id'));
     }
 
     /**
@@ -52,9 +56,9 @@ class EvenementsController extends AppController {
             $heure_fin = (!isset($_POST["journee"])) ? $_POST["heure_fin"] : null;
             $min_debut = (!isset($_POST["journee"])) ? $_POST["min_debut"] : null;
             $min_fin = (!isset($_POST["journee"])) ? $_POST["min_fin"] : null;
-            
+
             /* Ajout événement récurrent */
-            
+
             if (isset($_POST["recur"]) && $_POST["recur"] == '1') {
 
                 $date = new \DateTime($_POST["date_debut"]);
@@ -86,21 +90,21 @@ class EvenementsController extends AppController {
                         $entreDeux = 'P1M';
                     }
                     $fin = new \DateTime($_POST["recur_fin"]);
-                } 
+                }
                 // Détermination de l'intervalle entre 2 événements
                 $entreDeux = new \DateInterval($entreDeux);
                 // Création de l'événement "mère"
                 $this->Evenement->create([
-                        'titre' => $titre,
-                        'calendrier_id' => $calendrier_id,
-                        'user_id' => $user_id,
-                        'contenu' => $contenu,
-                        'heure_debut' => $heure_debut,
-                        'heure_fin' => $heure_fin,
-                        'min_debut' => $min_debut,
-                        'min_fin' => $min_fin,
-                        'date_debut' => $date->format('Y-m-d')
-                    ]);
+                    'titre' => $titre,
+                    'calendrier_id' => $calendrier_id,
+                    'user_id' => $user_id,
+                    'contenu' => $contenu,
+                    'heure_debut' => $heure_debut,
+                    'heure_fin' => $heure_fin,
+                    'min_debut' => $min_debut,
+                    'min_fin' => $min_fin,
+                    'date_debut' => $date->format('Y-m-d')
+                ]);
                 // Ajout du premier intervalle
                 $date->add($entreDeux);
                 // Récupération du dernier id inséré (= id de l'événement mère)
@@ -124,9 +128,9 @@ class EvenementsController extends AppController {
                 }
                 return $this->index();
             } else {
-                
+
                 /* Ajout normal */
-                
+
                 $result = $this->Evenement->create([
                     'titre' => $titre,
                     'calendrier_id' => $calendrier_id,
@@ -199,12 +203,12 @@ class EvenementsController extends AppController {
                 $this->Evenement->deleteAllChildren($_POST["parent_id"]);
             }
             if (isset($_POST["next"])) {
-               $this->Evenement->deleteNextChildren($_POST["parent_id"], $_POST["date_debut"]);
+                $this->Evenement->deleteNextChildren($_POST["parent_id"], $_POST["date_debut"]);
             }
             if (isset($_POST["previous"])) {
-               $this->Evenement->deletePreviousChildren($_POST["parent_id"], $_POST["date_debut"]);
+                $this->Evenement->deletePreviousChildren($_POST["parent_id"], $_POST["date_debut"]);
             }
-            
+
             return $this->index();
         }
     }

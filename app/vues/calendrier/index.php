@@ -2,12 +2,23 @@
 /*
  * Page d'accueil du calendrier
  */
-?>
+
+if (!empty($calendriers)) : ?>
 <div class="input-group">
-<form action="index.php?p=calendriers.index" method="POST">
-    <?= $formCal->select('choixCal', 'Vos calendriers', $calendriers)?>
-    <button class="btn btn-primary-outline" type="submit" name="confirmer" value="confirmer">Confirmer</button>
-</form>
+    <form action="index.php?p=calendriers.index" method="POST">
+        <?= $formCal->select('choixCal', '<i class="fa fa-calendar-o"></i>', $calendriers) ?>
+        <div class="btn-group">
+            <button class="btn btn-primary-outline" type="submit" name="confirmer" value="confirmer">Confirmer</button>
+            <button class="btn btn-primary-outline" type="button" data-toggle="collapse" href="#divAjoutCal" name="ajoutCal" value="ajoutCal"><i class="fa fa-plus"></i></button>
+        </div>
+
+    </form>
+</div>
+<div class="collapse" id="divAjoutCal">
+    <form action="index.php?p=calendriers.add" method="POST">
+    <?= $form->input('title', 'text', 'Nom') ?>
+        <?= $form->submit('ajouter') ?>
+    </form>
 </div>
 <h1><?= $calendrier->titre ?></h1>
 <div class="periodes">
@@ -154,8 +165,8 @@
                                                 <form action="index.php?p=evenements.delete" method="POST">
                                                     <input type="hidden" name="id" value="<?= $evenement->id ?>">
                                                     <input type="hidden" name="calendrier_id" value="<?= $evenement->calendrier_id ?>">
-                                                    <input type="hidden" name="date_debut" value="<?=$evenement->date_debut ?>">
-                                                    <input type="hidden" name="parent_id" value="<?=(is_null($evenement->parent_id)) ? $evenement->id :$evenement->parent_id?>">
+                                                    <input type="hidden" name="date_debut" value="<?= $evenement->date_debut ?>">
+                                                    <input type="hidden" name="parent_id" value="<?= (is_null($evenement->parent_id)) ? $evenement->id : $evenement->parent_id ?>">
                                                     <div class="hide" id="choixDelete<?= $evenement->id ?>">
                                                         <div class="checkbox">
                                                             <label><input name="only1" id="only1" type="checkbox">Seulement celui-ci</label>
@@ -263,7 +274,17 @@
 
     </div>
 </div>
-<!-- Fin model ajout article -->
+<!-- Fin modal ajout article -->
+<?php else: ?>
+<button class="btn btn-primary-outline" type="button" data-toggle="collapse" href="#divAjoutCal2" name="ajoutCal2" value="ajoutCal2"><i class="fa fa-plus"></i>Créer votre calendrier</button>
+<div class="collapse" id="divAjoutCal2">
+    <form action="index.php?p=calendriers.add" method="POST">
+        
+    <?= $form->input('title', 'text', 'Nom') ?>
+        <?= $form->submit('ajouter') ?>
+    </form>
+</div>
+<?php endif; ?>
 <div id="show"></div>
 <script>
     /**
