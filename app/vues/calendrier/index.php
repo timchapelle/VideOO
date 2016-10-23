@@ -6,7 +6,7 @@
 <div class="input-group">
 <form action="index.php?p=calendriers.index" method="POST">
     <?= $formCal->select('choixCal', 'Vos calendriers', $calendriers)?>
-    <button class="btn btn-primary-outline" type="submit" name="confirmer" value="donfirmer">Confirmer</button>
+    <button class="btn btn-primary-outline" type="submit" name="confirmer" value="confirmer">Confirmer</button>
 </form>
 </div>
 <h1><?= $calendrier->titre ?></h1>
