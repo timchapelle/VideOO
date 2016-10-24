@@ -4,44 +4,35 @@
  * 
  */
 
-if (isset($_GET["dossier"])) {
-    $adresseFichier = $_GET["dossier"] . '/' . $_GET["fichier"];
-    $_SESSION["adr"] = $adresseFichier;
-    chdir($adresseFichier);
-} else if (isset($_SESSION["adr"])) {
-    chdir($_SESSION["adr"]);
-    $adresseFichier = $_SESSION["adr"];
+if (empty($_POST["path"])) {
+    $path = getcwd();
+    $ls = scandir($path);
+} else {
+    $path = $_POST["path"];
+    $ls = scandir($path);
 }
-$ls = scandir(getcwd());
-$dossier = getcwd();
+?><div id="ls">
+<?php
 foreach ($ls as $elem => $v) {
-    if ($v == "..") {
-        chdir('..');
-        echo '<i class="fa fa-chevron-up"></i>';
+    if ($v == ".") {
+        echo '<i class="fa fa-bomb"></i>' . '<a href="#">.</a><br>';
     }
-
-    echo '<a href="index.php?p=editeurs.live&dossier=' . $dossier . '&fichier=' . $v . '">' . $v . '</a><br>';
+    else if ($v == "..") {
+        chdir('..');
+        echo '<i class="fa fa-arrow-up"></i>';
+        echo '<a class="up" href="#" title="' . $path . '/' . $v . '">' . $v . '</a><br>';
+    } else if(is_dir($path . '/' . $v)) {
+        chdir($path);
+        echo '<i class="fa fa-folder"></i> <a class="up" href="#" title="' . $path . '/' . $v . '">' . $v . '</a><br>';
+    } else if (is_file($path . '/' . $v)) {
+        echo '<i class="fa fa-file-o"></i> <a class="lien" href="#" title="' . $path . '/' . $v . '">' . $v . '</a><br>';
+    }
 }
-$contenuLive = file_get_contents($adresseFichier);
-// Sauvegarde du fichier
-if (isset($_POST["save"])) {
-
-    $file = $_SESSION["adr"];
-
-    $contenuTextarea = $_POST["code"];
-    if (file_put_contents($file, $contenuTextarea)) {
-        echo 'youpie';
-    };
-}
-
-/* Fichier */
-
-// Extensions autorisées : 
-$extensions = array('.php', '.html', '.css', '.cpp', '.js', '.sql', '.txt', '.h', '.md');
-// Extension du fichier : 
-$extension = strrchr($_GET["fichier"], '.');
 ?>
+</div>
 
+
+<!-- HTML -->
 <style>.CodeMirror {
         border: 1px solid #eee;
         height: auto;
@@ -49,59 +40,20 @@ $extension = strrchr($_GET["fichier"], '.');
     #abc {height:50px}
     .blink {background-color: rgba(127, 191, 63, 0.67);}
 </style>
-
+<?php if (empty($_POST["path"])) { ?>
 <h1>
     <i class="fa fa-code"></i>    Editeur de code
 </h1>
-<form action="index.php?p=editeurs.live" method="POST">
-    <textarea id="code" name="code">
-<?= $contenuLive ?>
-    </textarea>
-</div>
+
+    <textarea id="code" name="code"></textarea>
+
 <div class="col-sm-4">
 
     <button class="btn btn-success-outline" type="submit" name="save" id="save">Sauvegarder</button>
 
 </div>
-</form>
-
-<?php if (isset($extension) && in_array($extension, $extensions)) : ?>
-
-
-    <?php
-    switch ($extension) {
-        case '.php' :
-            $mode = "application/x-httpd-php";
-            break;
-        case '.css':
-            $mode = "css";
-            break;
-        case '.js':
-            $mode = "javascript";
-            break;
-        case '.html':
-            $mode = "text/html";
-            break;
-        case '.sql':
-            $mode = "text/x-mysql";
-            break;
-        case '.cpp':
-            $mode = "text/x-c++src";
-            break;
-        case '.h':
-            $mode = "text/x-c++src";
-            break;
-        case '.md':
-            $mode = "markdown";
-            break;
-        default:
-            $mode = "text";
-            break;
-    }
-endif;
-?>
-<div id="content"></div>
-<!-- Librairie de base -->
+<?php } ?>
+<!-- INCLUSIONS CODEMIRROR -->
 <script src="../assets/codemirror/lib/codemirror.js"></script>
 <!-- Addons -->
 <script src="../assets/codemirror/addon/edit/matchbrackets.js"></script>
@@ -135,13 +87,9 @@ endif;
 <script src="../assets/codemirror/mode/php/php.js"></script>
 <script src="../assets/codemirror/mode/markdown/markdown.js"></script>
 
+<!-- JQUERY -->
 <script>
     $(document).ready(function () {
-        $("#fichier").click(function () {
-            setInterval(function () {
-                $('#ok').toggleClass('blink');
-            }, 1000);
-        });
 
         var code = $("#code")[0];
         if (code != null) {
@@ -151,7 +99,7 @@ endif;
                 autoCloseBrackets: true,
                 matchTags: {bothTags: true},
                 autoCloseTags: true,
-                mode: "<?= isset($mode) ? $mode : "text/html" ?>",
+                mode: "<?= isset($mode) ? $mode : "application/x-httpd-php" ?>",
                 indentUnit: 4,
                 extraKeys: {
                     "Ctrl-Space": "autocomplete",
@@ -160,9 +108,45 @@ endif;
                 },
                 value: document.documentElement.innerHTML
             });
+            
         }
+        $(".lien").click(function () {
+            jQuery.ajax({
+                url: "index.php?p=editeurs.ajax",
+                data: 'fichier=' + $(this).attr("title"),
+                dataType: 'text',
+                type: 'POST',
+                success: function (data) {
+                    editor.setValue("");
+                    editor.clearHistory();
+                    editor.setValue(data);
+                    editor.clearGutter();
+                },
+                error: function () {
+                    $("#code").text('Impossible de charger le fichier...');
+                }
+            });
+            
+        });
+        $(".up").click(function () {
+            jQuery.ajax({
+                url: "index.php?p=editeurs.editLive",
+                data: 'path=' + $(this).attr("title"),
+                dataType: 'text',
+                type: 'POST',
+                success: function (data) {
+                    $("#ls").html(data);
+                    editor.setValue("");
+                    editor.clearHistory();
+                    editor.clearGutter();
+                },
+                error: function () {
+                    $("#code").text('Impossible de charger le fichier...');
+                }
+            });
+        });
     });
-  
+
 
 
     //   $(":file").filestyle({buttonBefore: true});

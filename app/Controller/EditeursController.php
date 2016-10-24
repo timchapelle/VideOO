@@ -21,4 +21,10 @@ class EditeursController extends AppController {
     public function live() {
         return $this->afficher('editeur.editeurLive');
     }
+    public function editLive() {
+        return require('../app/vues/editeur/editeurLive.php');
+    }
+    public function ajax() {
+        return require('../app/vues/editeur/editeurAjax.php');
+    }
 }
